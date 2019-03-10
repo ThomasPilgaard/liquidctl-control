@@ -9,6 +9,7 @@ def setSpeedOfFans(fans, speed):
 
 def _setSpeed(fan, speed):
     subprocess.run(["liquidctl", "set", fan, "speed", speed])
+    time.sleep(1)
 
 
 def initializeLiquidctl():

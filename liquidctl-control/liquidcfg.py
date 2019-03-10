@@ -19,9 +19,11 @@ topFans = []
 
 evenTemps = col.deque(maxlen=circularBufSize)
 
+
 def main():
     killer = gracefulkiller.GraceFulKiller()
     try:
+        currentFanSpeed = "-1"
         fansToControl = getFansToControl()
 
         liq.initializeLiquidctl()
@@ -35,18 +37,22 @@ def main():
             tempMedian = stat.median(evenTemps)
 
             fanSpeed = calculateFanSpeedFromCpuTemperature(tempMedian)
-            liq.setSpeedOfFans(fansToControl, fanSpeed)
 
-            print("--------------------------------------")
-            print(evenTemps)
-            print("Median: " + str(tempMedian))
-            print("setting speed to " + fanSpeed)
-            sys.stdout.flush()
+            if currentFanSpeed != fanSpeed:
+                liq.setSpeedOfFans(fansToControl, fanSpeed)
 
-            time.sleep(2)
+                print("--------------------------------------")
+                print(evenTemps)
+                print("Median: " + str(tempMedian))
+                print("setting speed to " + fanSpeed)
+                sys.stdout.flush()
+
+                currentFanSpeed = fanSpeed
 
             if killer.kill_now:
                 break
+
+            time.sleep(2)
 
     finally:
         errorHandling(traceback.format_exc())
@@ -69,7 +75,7 @@ def calculateFanSpeedFromCpuTemperature(temp):
     if temp > 50:
         return "40"
     if temp > 0:
-        return "10"
+        return "0"
 
 def getFansToControl():
     return frontFans + backFans + topFans

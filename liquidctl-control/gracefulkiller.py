@@ -1,3 +1,4 @@
+# https://stackoverflow.com/a/31464349
 import signal
 
 class GraceFulKiller:

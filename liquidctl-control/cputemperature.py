@@ -1,5 +1,5 @@
 import subprocess
-import re
+import glob
 
 def getMaxCpuTemperature():
     return max(getAllCpuTemperatures())
@@ -25,15 +25,5 @@ def _temperatureRemoveTrailingZeroes(temperature):
     return temperature//1000
 
 def _getCpuSensorFiles():
-    cpuSensorFiles = []
-    allHwmonFiles = subprocess.check_output(["find", "/sys/class/hwmon/hwmon1/"]).decode("utf-8")
-    for hwmonFile in allHwmonFiles.split('\n'):
-        if _fileIsSensorFile(hwmonFile):
-            cpuSensorFiles.append(hwmonFile)
-    return cpuSensorFiles
-
-def _fileIsSensorFile(fileName):
-    inputFileRegex = "temp\d\d*?_input"
-    fileMatch = re.search(inputFileRegex, fileName)
-    return fileMatch is not None
+    return glob.glob("/sys/class/hwmon/hwmon1/*_input")
 
